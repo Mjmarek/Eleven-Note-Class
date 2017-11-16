@@ -41,10 +41,10 @@
             @Html.DisplayFor(modelItem => item.ModifiedUtc)
         </td>
         <td>
-            @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
+            @Html.ActionLink("Edit", "Edit", new { id=item.NoteId }) |
             @Html.ActionLink("Details", "Details", new { id=item.NoteId })|
-            @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
-        </td>@*"id" on the left side of id = item.NoteId is part of the route*@
+            @Html.ActionLink("Delete", "Delete", new { id=item.NoteId })
+        </td>@*"id" on the left side of "id = item.NoteId" is part of the route*@
     </tr>
 }
 

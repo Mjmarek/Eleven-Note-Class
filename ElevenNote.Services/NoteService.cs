@@ -60,6 +60,11 @@ namespace ElevenNote.Services
             }
         }
 
+        public object GetNoteById(object id)
+        {
+            throw new NotImplementedException();
+        }
+
         public NoteDetailModel GetNoteById(int id)
         {
             NoteEntity entity;

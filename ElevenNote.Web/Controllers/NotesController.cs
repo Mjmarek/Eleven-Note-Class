@@ -12,11 +12,18 @@ namespace ElevenNote.Web.Controllers
     [Authorize]//visitor to website needs to be logged in to access content below
     public class NotesController : Controller
     {
-        public ActionResult Index()
+        //all methods in the controller now have access to NoteService CreateNoteService()
+        //refactored, moved this code out of each individual method, and placed it here
+        private NoteService CreateNoteService()
         {
             var userId = Guid.Parse(User.Identity.GetUserId());
             var svc = new NoteService(userId);
-            var model = svc.GetNotes();
+            return svc;
+        }
+
+        public ActionResult Index()
+        {
+            var model = CreateNoteService().GetNotes();
             return View(model);
         }
 
@@ -31,11 +38,8 @@ namespace ElevenNote.Web.Controllers
         public ActionResult Create(NoteCreateModel model)
         {
             if (!ModelState.IsValid) return View(model);
-
-            var userId = Guid.Parse(User.Identity.GetUserId());
-            var svc = new NoteService(userId);
-        
-            if (!svc.CreateNote(model))
+            
+            if (!CreateNoteService().CreateNote(model))
             {
                 ModelState.AddModelError("", "Unable to create note");
                 return View(model);
@@ -46,9 +50,7 @@ namespace ElevenNote.Web.Controllers
 
         public ActionResult Details(int id)
         {
-            var userId = Guid.Parse(User.Identity.GetUserId());
-            var svc = new NoteService(userId);
-            var model = svc.GetNoteById(id);
+            var model = CreateNoteService().GetNoteById(id);
             return View(model);
         }
     }

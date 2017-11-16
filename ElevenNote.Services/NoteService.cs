@@ -41,6 +41,7 @@ namespace ElevenNote.Services
         }
 
         public bool CreateNote(NoteCreateModel model)
+        //use true or false to determine whether or not we were able to update note
         {
             using (var ctx = new ElevenNoteDbContext())
             //any time we work with db, we create new context instance ("ctx")
@@ -65,12 +66,9 @@ namespace ElevenNote.Services
 
             using (var ctx = new ElevenNoteDbContext())
             {
-                entity = 
-                    ctx
-                        .Notes
-                        .SingleOrDefault(e => e.NoteId == id && e.OwnerId == _userId);
-                        //will only return note with selected id user requesting it also created it
-            }
+                entity = GetNoteById(ctx, id);
+                             
+            }//when "using" block is closed, connection to db is also closed
 
             if (entity == null) return new NoteDetailModel();
             //"SingleOrDefault" means if it can't find note with selected id & usedId,
@@ -86,6 +84,45 @@ namespace ElevenNote.Services
                     CreatedUtc = entity.CreatedUtc,
                     ModifiedUtc = entity.ModifiedUtc
                 };
+        }
+
+        public bool UpdateNote(NoteEditModel model)
+        {
+            using (var ctx = new ElevenNoteDbContext())
+            {
+                var entity = GetNoteById(ctx, model.NoteId);
+                    
+                if (entity == null) return false;
+
+                entity.Title = model.Title;
+                entity.Content = model.Content;
+                entity.ModifiedUtc = DateTime.UtcNow;
+
+                return ctx.SaveChanges() == 1;
+            }
+        }
+        
+        //"private" means only accessible to metods within this class/limited scope
+        private NoteEntity GetNoteById(ElevenNoteDbContext context, int noteId)
+        {
+            return
+                context
+                    .Notes
+                    .SingleOrDefault(e => e.NoteId == noteId && e.OwnerId == _userId);
+        }           //will only return note with selected id user requesting it also created it
+
+        public bool DeleteNote(int noteId)//don't need to pass in a model, just the id
+        {
+            using (var ctx = new ElevenNoteDbContext())
+            {
+                var entity = GetNoteById(ctx, noteId);                   
+
+                if (entity == null) return false;
+
+                ctx.Notes.Remove(entity);
+
+                return ctx.SaveChanges() == 1;
+            }
         }
     }
 }

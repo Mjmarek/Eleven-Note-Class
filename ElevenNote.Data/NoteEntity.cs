@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
@@ -23,6 +24,9 @@ namespace ElevenNote.Data
 
         [MaxLength(500)]//max length will limit amount of storage established by database
         public string Content { get; set; }
+
+        [DefaultValue(false)]
+        public bool IsStarred { get; set; }
 
         [Required]
         public DateTime CreatedUtc { get; set; }//value type means it must have a value

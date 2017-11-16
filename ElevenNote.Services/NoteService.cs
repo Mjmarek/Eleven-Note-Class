@@ -44,6 +44,7 @@ namespace ElevenNote.Services
         {
             using (var ctx = new ElevenNoteDbContext())
             //any time we work with db, we create new context instance ("ctx")
+            //cleans up after itself so we get those connections back
             {
                 var entity =
                     new NoteEntity
@@ -56,6 +57,35 @@ namespace ElevenNote.Services
                 ctx.Notes.Add(entity);
                 return ctx.SaveChanges() == 1;//number of rows affected in database; should be 1
             }
+        }
+
+        public NoteDetailModel GetNoteById(int id)
+        {
+            NoteEntity entity;
+
+            using (var ctx = new ElevenNoteDbContext())
+            {
+                entity = 
+                    ctx
+                        .Notes
+                        .SingleOrDefault(e => e.NoteId == id && e.OwnerId == _userId);
+                        //will only return note with selected id user requesting it also created it
+            }
+
+            if (entity == null) return new NoteDetailModel();
+            //"SingleOrDefault" means if it can't find note with selected id & usedId,
+            //it will return null by default.
+            //To avoid null error, we need this line of code to return model instead.
+
+            return
+                new NoteDetailModel
+                {
+                    NoteId = entity.NoteId,
+                    Title = entity.Title,
+                    Content = entity.Content,
+                    CreatedUtc = entity.CreatedUtc,
+                    ModifiedUtc = entity.ModifiedUtc
+                };
         }
     }
 }

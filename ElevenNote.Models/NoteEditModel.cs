@@ -21,6 +21,8 @@ namespace ElevenNote.Models
         [MaxLength(500)]
         public string Content { get; set; }
 
+        public bool IsStarred { get; set; }
+
         //system will specify modified time, so we don't need to include its property
     }
 }
